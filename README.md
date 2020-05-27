@@ -18,11 +18,11 @@ If using laravel < 5.5 include the service provider and alias within `config/app
 
 ```php
 'providers' => [
-    UxWeb\SweetAlert\SweetAlertServiceProvider::class,
+    TeunVos\SweetAlert\SweetAlertServiceProvider::class,
 ];
 
 'aliases' => [
-    'Alert' => UxWeb\SweetAlert\SweetAlert::class,
+    'Alert' => TeunVos\SweetAlert\SweetAlert::class,
 ];
 ```
 
@@ -187,7 +187,7 @@ protected $middlewareGroups = [
     'web' => [
         \App\Http\Middleware\EncryptCookies::class,
         ...
-        \UxWeb\SweetAlert\ConvertMessagesIntoSweetAlert::class,
+        \TeunVos\SweetAlert\ConvertMessagesIntoSweetAlert::class,
     ],
 
     'api' => [
@@ -206,7 +206,7 @@ Or if you would like to assign the middleware to specific routes only, you shoul
 protected $routeMiddleware = [
     'auth' => \App\Http\Middleware\Authenticate::class,
     ....
-    'sweetalert' => \UxWeb\SweetAlert\ConvertMessagesIntoSweetAlert::class,
+    'sweetalert' => \TeunVos\SweetAlert\ConvertMessagesIntoSweetAlert::class,
 ];
 ```
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace UxWeb\SweetAlert;
+namespace TeunVos\SweetAlert;
 
 interface SessionStore
 {

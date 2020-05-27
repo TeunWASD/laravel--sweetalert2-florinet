@@ -1,6 +1,6 @@
 <?php
 
-namespace UxWeb\SweetAlert;
+namespace TeunVos\SweetAlert;
 
 class SweetAlertNotifier
 {
@@ -8,9 +8,10 @@ class SweetAlertNotifier
     const ICON_ERROR = 'error';
     const ICON_SUCCESS = 'success';
     const ICON_INFO = 'info';
+    const ICON_QUESTION = 'question';
 
     /**
-     * @var \UxWeb\SweetAlert\SessionStore
+     * @var \TeunVos\SweetAlert\SessionStore
      */
     protected $session;
 
@@ -21,18 +22,10 @@ class SweetAlertNotifier
      */
     protected $config = [];
 
-    protected $defaultButtonConfig = [
-        'text' => '',
-        'visible' => false,
-        'value' => null,
-        'className' => '',
-        'closeModal' => true,
-    ];
-
     /**
      * Create a new SweetAlertNotifier instance.
      *
-     * @param \UxWeb\SweetAlert\SessionStore $session
+     * @param \TeunVos\SweetAlert\SessionStore $session
      */
     public function __construct(SessionStore $session)
     {
@@ -50,11 +43,6 @@ class SweetAlertNotifier
     {
         $this->setConfig([
             'timer' => config('sweet-alert.autoclose'),
-            'text' => '',
-            'buttons' => [
-                'cancel' => false,
-                'confirm' => false,
-            ],
         ]);
     }
 
@@ -67,7 +55,7 @@ class SweetAlertNotifier
      * @param string $title
      * @param string $icon
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function message($text = '', $title = null, $icon = null)
     {
@@ -78,7 +66,7 @@ class SweetAlertNotifier
         }
 
         if (! is_null($icon)) {
-            $this->config['icon'] = $icon;
+            $this->config['type'] = $icon;
         }
 
         return $this;
@@ -90,7 +78,7 @@ class SweetAlertNotifier
      * @param string $text
      * @param string $title
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function basic($text, $title)
     {
@@ -105,7 +93,7 @@ class SweetAlertNotifier
      * @param string $text
      * @param string $title
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function info($text, $title = '')
     {
@@ -120,7 +108,7 @@ class SweetAlertNotifier
      * @param string $text
      * @param string $title
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function success($text, $title = '')
     {
@@ -135,7 +123,7 @@ class SweetAlertNotifier
      * @param string $text
      * @param string $title
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function error($text, $title = '')
     {
@@ -150,7 +138,7 @@ class SweetAlertNotifier
      * @param string $text
      * @param string $title
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function warning($text, $title = '')
     {
@@ -163,29 +151,16 @@ class SweetAlertNotifier
      * Set the duration for this alert until it autocloses.
      *
      * @param int $milliseconds
+     * @param bool $progressBar
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
-    public function autoclose($milliseconds = null)
+    public function autoclose($milliseconds = null, $progressBar = true)
     {
         if (! is_null($milliseconds)) {
             $this->config['timer'] = $milliseconds;
+            $this->config['timerProgressBar'] = $progressBar;
         }
-
-        return $this;
-    }
-
-    /**
-     * Add a confirmation button to the alert.
-     *
-     * @param string $buttonText
-     *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
-     */
-    public function confirmButton($buttonText = 'OK', $overrides = [])
-    {
-        $this->addButton('confirm', $buttonText, $overrides);
-
         return $this;
     }
 
@@ -195,11 +170,17 @@ class SweetAlertNotifier
      * @param string $buttonText
      * @param array  $overrides
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
-    public function cancelButton($buttonText = 'Cancel', $overrides = [])
+    public function cancelButton($buttonText, $color = null, $ariaLabel = null)
     {
-        $this->addButton('cancel', $buttonText, $overrides);
+        $this->config['showCancelButton'] = true;
+        $this->config['confirmCancelText'] = $buttonText;
+        isset($color) ?? $this->config['cancelButtonColor'] = $color;
+        isset($ariaLabel) ?? $this->config['cancelButtonAriaLabel'] = $ariaLabel;
+
+        $this->closeOnClickOutside(false);
+        $this->removeTimer();
 
         return $this;
     }
@@ -207,22 +188,17 @@ class SweetAlertNotifier
     /**
      * Add a new custom button to the alert.
      *
-     * @param string $key
      * @param string $buttonText
      * @param array  $overrides
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
-    public function addButton($key, $buttonText, $overrides = [])
+    public function confirmButton($buttonText, $color = null, $ariaLabel = null)
     {
-        $this->config['buttons'][$key] = array_merge(
-            $this->defaultButtonConfig,
-            [
-                'text' => $buttonText,
-                'visible' => true,
-            ],
-            $overrides
-        );
+        $this->config['showConfirmButton'] = true;
+        $this->config['confirmButtonText'] = $buttonText;
+        isset($color) ?? $this->config['confirmButtonColor'] = $color;
+        isset($ariaLabel) ?? $this->config['confirmButtonAriaLabel'] = $ariaLabel;
 
         $this->closeOnClickOutside(false);
         $this->removeTimer();
@@ -235,11 +211,11 @@ class SweetAlertNotifier
      *
      * @param string $buttonText
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
     public function closeOnClickOutside($value = true)
     {
-        $this->config['closeOnClickOutside'] = $value;
+        $this->config['allowOutsideClick'] = $value;
 
         return $this;
     }
@@ -249,11 +225,11 @@ class SweetAlertNotifier
      *
      * @param string $buttonText
      *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
+     * @return \TeunVos\SweetAlert\SweetAlertNotifier $this
      */
-    public function persistent($buttonText = 'OK')
+    public function persistent($buttonText = 'OK', $color = null, $ariaLabel = null)
     {
-        $this->addButton('confirm', $buttonText);
+        $this->confirmButton($buttonText, $color, $ariaLabel);
         $this->closeOnClickOutside(false);
         $this->removeTimer();
 
@@ -270,22 +246,6 @@ class SweetAlertNotifier
         if (array_key_exists('timer', $this->config)) {
             unset($this->config['timer']);
         }
-    }
-
-    /**
-     * Make Message HTML view.
-     *
-     * @param bool|true $html
-     *
-     * @return \UxWeb\SweetAlert\SweetAlertNotifier $this
-     */
-    public function html()
-    {
-        $this->config['content'] = $this->config['text'];
-
-        unset($this->config['text']);
-
-        return $this;
     }
 
     /**

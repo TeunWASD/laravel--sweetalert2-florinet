@@ -2,8 +2,8 @@
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use UxWeb\SweetAlert\SessionStore;
-use UxWeb\SweetAlert\SweetAlertNotifier;
+use TeunVos\SweetAlert\SessionStore;
+use TeunVos\SweetAlert\SweetAlertNotifier;
 
 class SweetAlertNotifierTest extends TestCase
 {

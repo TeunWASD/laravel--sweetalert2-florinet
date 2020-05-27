@@ -1,16 +1,16 @@
 <?php
 
-namespace UxWeb\SweetAlert;
+namespace TeunVos\SweetAlert;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier message(string $text = '', $title = null, $icon = null)
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier basic(string $text, string $title)
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier info(string $text, string $title = '')
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier success(string $text, string $title = '')
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier error(string $text, string $title = '')
- * @method static \UxWeb\SweetAlert\SweetAlertNotifier warning(string $text, string $title = '')
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier message(string $text = '', $title = null, $icon = null)
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier basic(string $text, string $title)
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier info(string $text, string $title = '')
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier success(string $text, string $title = '')
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier error(string $text, string $title = '')
+ * @method static \TeunVos\SweetAlert\SweetAlertNotifier warning(string $text, string $title = '')
  */
 class SweetAlert extends Facade
 {
@@ -21,6 +21,6 @@ class SweetAlert extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'uxweb.sweet-alert';
+        return 'teunvos.sweet-alert';
     }
 }
