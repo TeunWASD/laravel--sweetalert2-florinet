@@ -37,12 +37,12 @@ class SweetAlertServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            'UxWeb\SweetAlert\SessionStore',
-            'UxWeb\SweetAlert\LaravelSessionStore'
+            'TeunVos\SweetAlert\SessionStore',
+            'TeunVos\SweetAlert\LaravelSessionStore'
         );
 
-        $this->app->bind('uxweb.sweet-alert', function () {
-            return $this->app->make('UxWeb\SweetAlert\SweetAlertNotifier');
+        $this->app->bind('teunvos.sweet-alert', function () {
+            return $this->app->make('TeunVos\SweetAlert\SweetAlertNotifier');
         });
     }
 
@@ -54,8 +54,8 @@ class SweetAlertServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'UxWeb\SweetAlert\SessionStore',
-            'uxweb.sweet-alert',
+            'TeunVos\SweetAlert\SessionStore',
+            'teunvos.sweet-alert',
         ];
     }
 }
